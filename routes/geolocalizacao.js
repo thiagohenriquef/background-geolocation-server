@@ -9,11 +9,15 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', (req, res) => {
-  console.log('------------------------------------')
-  console.log(req.body)
-  // db.query('insert into geolocalizacao(latitude, longitude) values ($1, false) RETURNING id', [req.body.texto])
-    // .then(({ rows }) => res.status(200).json(rows[0].id))
-    // .catch(errorCallback)
+  if (req && req.body.length) {
+    const array = [Number(req.body[0].latitude), Number(req.body[0].longitude)]
+
+    db.query('insert into geolocalizacao(latitude, longitude) values ($1, $2) RETURNING id', array)
+    .then(({ rows }) => res.status(200).json(rows[0].id))
+    .catch(errorCallback)
+    return
+  }
+  errorCallback('error on POST request on geolocalizacao')
 })
 
 module.exports = router
